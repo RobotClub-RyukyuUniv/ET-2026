@@ -1,0 +1,12 @@
+# OS固有の隠しファイル（Mac/Windows両対応）
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# VS Codeの個人設定
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# ETロボコン関係
+build/
