@@ -1,0 +1,6 @@
+SRCLANG := c++
+
+APPL_COBJS +=
+
+APPL_CXXOBJS += 
+
