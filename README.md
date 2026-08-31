@@ -30,9 +30,9 @@ git clone git@github.com:RobotClub-RyukyuUniv/ET-2026.git
 ```
 
 
-2. クローンしたディレクトリを、公式環境の `workspace/` 直下に移動させ、任意のアプリ名（例: `et-2026`）に変更します。
+2. クローンしたディレクトリを、公式環境の `workspace/` 直下にコピーさせ、任意のアプリ名（例: `et-2026`）に変更します。
 ```bash
-mv ET-2026/et-2026 ~/etrobo/workspace/et-2026
+cp -r ET-2026/et-2026 ~/etrobo/workspace/et-2026
 
 ```
 
