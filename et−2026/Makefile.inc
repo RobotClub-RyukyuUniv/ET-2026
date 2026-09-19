@@ -1,6 +1,21 @@
+mkfile_path := $(dir $(lastword $(MAKEFILE_LIST)))
+# ここに追加したいファイルを書く
+APPL_CXXOBJS += \
+	Tracer.o \
+
 SRCLANG := c++
 
-APPL_COBJS +=
+ifdef CONFIG_EV3RT_APPLICATION
 
-APPL_CXXOBJS += 
+# Include libraries
+include $(EV3RT_SDK_LIB_DIR)/libcpp-spike/Makefile
 
+endif
+
+APPL_DIRS += $(mkfile_path)app $(mkfile_path)unit
+
+INCLUDES += \
+	-I$(mkfile_path)../../../drivers/include \
+	-I$(mkfile_path)../../../drivers/include/spike \
+	-I$(mkfile_path)../../../drivers/include/libcpp/spike \
+	-I$(mkfile_path)app \
