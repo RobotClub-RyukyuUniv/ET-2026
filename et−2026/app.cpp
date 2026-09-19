@@ -1,50 +1,34 @@
-#include "app.h"
+#include "app.h" // <1>
 #include <stdio.h>
 
-#include <libcpp/spike/Motor.h> 
-#include <libcpp/spike/Clock.h>
-#include <libcpp/spike/ForceSensor.h> 
+#include "Tracer.h" // <2>
+#include "ForceSensor.h" // <3>
+#include "Clock.h"  
 
-using namespace spikeapi; 
+Tracer tracer;  // <4>
+Clock clock;    // <5>
 
-/**
- * メインタスク
- */
-void main_task(intptr_t unused) { 
 
-  Motor leftWheel(EPort::PORT_B,Motor::EDirection::COUNTERCLOCKWISE,true); // <1>
-  Motor rightWheel(EPort::PORT_A,Motor::EDirection::CLOCKWISE,true);  // <2>
-  ForceSensor forceSensor(EPort::PORT_D); // <3>
-  Clock clock; // <4>
+using namespace spikeapi;
 
-  const int8_t pwm = 60;
+void tracer_task(intptr_t exinf) { // <1>
+  tracer.run(); // <2>
+  ext_tsk();
+}
 
-  const uint32_t duration = 2000*1000; 
+void main_task(intptr_t unused) { // <1>
+  const int32_t duration = 100*1000; // <2>
+  ForceSensor forceSensor(EPort::PORT_D);
 
-  while(1) { 
-    printf("Forwarding...\n");
-    leftWheel.setPower(pwm); 
-    rightWheel.setPower(pwm);
-    clock.sleep(duration); 
-
-    printf("Backwarding...\n");
-    leftWheel.setPower(-pwm);
-    rightWheel.setPower(-pwm);
-    clock.sleep(duration);
-
-    // フォースセンサーが押されているかどうか調べる
-    if (forceSensor.isTouched()) {
-      break;
-    }
-  } 
-
-  printf("Stopped.\n");
-  leftWheel.stop();
-  rightWheel.stop();
-  // フォースセンサーの押された状態が解除されたかを調べる
-  while(forceSensor.isTouched()) {
-      ;
+  tracer.init(); // <3>
+  sta_cyc(TRACER_CYC); // <4>
+  
+  while (!forceSensor.isTouched()) { // <1>
+      clock.sleep(duration);   // <2>
   }
 
-  ext_tsk(); 
+  stp_cyc(TRACER_CYC); // <3>
+  tracer.terminate(); // <4>
+  ext_tsk(); // <5>
 }
+
