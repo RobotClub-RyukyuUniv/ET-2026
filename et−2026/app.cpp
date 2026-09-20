@@ -4,6 +4,8 @@
 #include "Tracer.h" // <2>
 #include "ForceSensor.h" // <3>
 #include "Clock.h"  
+#include "ColorSensorManager.h"
+#include "DualMotorController.h"
 
 Tracer tracer;  // <4>
 Clock clock;    // <5>
