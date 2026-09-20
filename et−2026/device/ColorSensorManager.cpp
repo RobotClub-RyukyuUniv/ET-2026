@@ -1,39 +1,24 @@
 #include "ColorSensorManager.h"
 
 ColorSensorManager::ColorSensorManager(spikeapi::ColorSensor& sensor)
-    : colorSensor(sensor) {
+    : colorSensor(sensor), mHsv{0, 0, 0} {
 }
 
-// 列挙型 switch で処理を明確に分岐
-void ColorSensorManager::getSV(SV& sv, MeasureMode mode) {
-    switch (mode) {
-        case MeasureMode::SURFACE:
-            getSVForSurface(sv);
-            break;
-        case MeasureMode::AMBIENT:
-            getSVForAmbient(sv);
-            break;
-    }
+// 表面（Surface）のSV値を取得
+void ColorSensorManager::getSurfaceSV(SV& sv) const {
+    colorSensor.getHSV(mHsv, true); // メンバ変数を直接使って取得
+    sv.s = mHsv.s;
+    sv.v = mHsv.v;
 }
 
-// 表面（SURFACE）用処理
-void ColorSensorManager::getSVForSurface(SV& sv) {
-    spikeapi::ColorSensor::HSV hsv;
-    colorSensor.getHSV(hsv, true); // APIの surface=true を呼び出し
-    
-    sv.s = hsv.s;
-    sv.v = hsv.v;
+// 環境光（Ambient）のSV値を取得
+void ColorSensorManager::getAmbientSV(SV& sv) const {
+    colorSensor.getHSV(mHsv, false); // メンバ変数を直接使って取得
+    sv.s = mHsv.s;
+    sv.v = mHsv.v;
 }
 
-// 環境光・非表面（AMBIENT）用処理
-void ColorSensorManager::getSVForAmbient(SV& sv) {
-    spikeapi::ColorSensor::HSV hsv;
-    colorSensor.getHSV(hsv, false); // APIの surface=false を呼び出し
-    
-    sv.s = hsv.s;
-    sv.v = hsv.v;
-}
-
-int32_t ColorSensorManager::getReflection() {
+// 反射率を取得
+int32_t ColorSensorManager::getReflection() const {
     return colorSensor.getReflection();
 }

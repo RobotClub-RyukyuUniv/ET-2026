@@ -2,7 +2,7 @@
 #define COLOR_SENSOR_MANAGER_H
 
 #include <cstdint>
-#include "ColorSensor.h" // ColorSensor.h をインクルード
+#include "ColorSensor.h"
 
 // SV（彩度・明度）の構造体
 struct SV {
@@ -11,27 +11,24 @@ struct SV {
 };
 
 class ColorSensorManager {
-public:
-    // true / false の代わりに意味がわかりやすい名前（列挙型）を定義
-    enum class MeasureMode {
-        SURFACE, // 表面の色（旧 surface = true）
-        AMBIENT  // 光源・環境光（旧 surface = false）
-    };
-
 private:
     spikeapi::ColorSensor& colorSensor;
 
-    // モード（SURFACE / AMBIENT）ごとの専用内部メソッド
-    void getSVForSurface(SV& sv);
-    void getSVForAmbient(SV& sv);
+    // 呼び出しごとのスタック確保を避けるため、作業用変数をメンバとして静的に保持
+    mutable spikeapi::ColorSensor::HSV mHsv;
 
 public:
     // コンストラクタ
     explicit ColorSensorManager(spikeapi::ColorSensor& sensor);
 
-    // モードを指定してSV値を取得（デフォルトは SURFACE モード）
-    void getSV(SV& sv, MeasureMode mode = MeasureMode::SURFACE);
-    int32_t getReflection();
+    // 表面（Surface）のSV値を取得
+    void getSurfaceSV(SV& sv) const;
+
+    // 環境光（Ambient）のSV値を取得
+    void getAmbientSV(SV& sv) const;
+
+    // 反射率を取得
+    int32_t getReflection() const;
 };
 
 #endif // COLOR_SENSOR_MANAGER_H
