@@ -1,21 +1,28 @@
 #include "ColorSensorManager.h"
 
-ColorSensorManager::ColorSensorManager(spikeapi::ColorSensor& sensor)
-    : colorSensor(sensor), mHsv{0, 0, 0} {
+using namespace spikeapi;
+
+ColorSensorManager::ColorSensorManager(ColorSensor& sensor)
+    : colorSensor(sensor) {
 }
 
 // 表面（Surface）のSV値を取得
 void ColorSensorManager::getSurfaceSV(SV& sv) const {
-    colorSensor.getHSV(mHsv, true); // メンバ変数を直接使って取得
-    sv.s = mHsv.s;
-    sv.v = mHsv.v;
+    // 関数内静的変数（データセグメントに配置され、毎回のスタック確保を避ける）
+    static ColorSensor::HSV surfaceHsv{0, 0, 0};
+    
+    colorSensor.getHSV(surfaceHsv, true);
+    sv.s = surfaceHsv.s;
+    sv.v = surfaceHsv.v;
 }
 
 // 環境光（Ambient）のSV値を取得
 void ColorSensorManager::getAmbientSV(SV& sv) const {
-    colorSensor.getHSV(mHsv, false); // メンバ変数を直接使って取得
-    sv.s = mHsv.s;
-    sv.v = mHsv.v;
+    static ColorSensor::HSV ambientHsv{0, 0, 0};
+    
+    colorSensor.getHSV(ambientHsv, false);
+    sv.s = ambientHsv.s;
+    sv.v = ambientHsv.v;
 }
 
 // 反射率を取得

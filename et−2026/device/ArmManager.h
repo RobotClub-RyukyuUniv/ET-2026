@@ -1,22 +1,24 @@
-#ifndef ARM_MANAGER_H_
-#define ARM_MANAGER_H_
+#ifndef ARM_MANAGER_H
+#define ARM_MANAGER_H
 
-#include "Motor.h" // EV3/SPIKE API等のMotorクラスをインクルード
+#include "Motor.h"
+
+using namespace spikeapi;
 
 class ArmManager {
 private:
-    // - armMotor : Motor
-    ev3api::Motor& armMotor; // モーターインスタンスへの参照（または実体）
+    // モーターインスタンスへの参照
+    Motor& armMotor;
 
 public:
     // コンストラクタ（使用するモーターのインスタンスを受け取る）
-    explicit ArmManager(ev3api::Motor& motor);
+    explicit ArmManager(Motor& motor);
 
-    // + up() : void
+    // アームを上げる
     void up();
 
-    // + down() : void
+    // アームを下げる
     void down();
 };
 
-#endif // ARM_MANAGER_H_
+#endif // ARM_MANAGER_H

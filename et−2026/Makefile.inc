@@ -1,11 +1,13 @@
 mkfile_path := $(dir $(lastword $(MAKEFILE_LIST)))
 
-# オブジェクトファイルを追加 (.o)
 APPL_CXXOBJS += \
 	Tracer.o \
-	LineTracer.o \
+	ArmManager.o \
 	ColorSensorManager.o \
-	DualMotorController.o
+	DualMotorController.o \
+	HeadingSensorManager.o \
+	TimerManager.o \
+	UltrasonicDistanceSensorManager.o
 
 SRCLANG := c++
 
@@ -19,9 +21,7 @@ endif
 # ディレクトリの指定
 APPL_DIRS += \
 	$(mkfile_path)app \
-	$(mkfile_path)unit \
 	$(mkfile_path)device \
-	$(mkfile_path)tracer
 
 # インクルードパスの指定
 INCLUDES += \
@@ -30,4 +30,3 @@ INCLUDES += \
 	-I$(mkfile_path)../../../drivers/include/libcpp/spike \
 	-I$(mkfile_path)app \
 	-I$(mkfile_path)device \
-	-I$(mkfile_path)tracer

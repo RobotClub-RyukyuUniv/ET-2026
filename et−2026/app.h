@@ -30,8 +30,3 @@ extern void tracer_cyc(intptr_t exinf);
 #ifdef __cplusplus
 }
 #endif
-
-#ifdef __cplusplus
-#include "ColorSensor.h"
-#include "ColorSensorManager.h"
-#include "LeftRightMotor.h"

@@ -1,4 +1,4 @@
-#include "LeftRightMotor.h"
+#include "DualMotorController.h"
 
 LeftRightMotor::LeftRightMotor():
   leftWheel(EPort::PORT_B,Motor::EDirection::COUNTERCLOCKWISE,true),

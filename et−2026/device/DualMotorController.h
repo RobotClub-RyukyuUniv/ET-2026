@@ -1,3 +1,6 @@
+#ifndef DUAL_MOTOR_CONTROLLER_H
+#define DUAL_MOTOR_CONTROLLER_H
+
 #include "Motor.h"
 
 using namespace spikeapi;
@@ -15,3 +18,5 @@ private:
   Motor leftWheel;
   Motor rightWheel;
 };
+
+#endif // DUAL_MOTOR_CONTROLLER_H
