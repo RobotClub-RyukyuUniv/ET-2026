@@ -1,7 +1,13 @@
 mkfile_path := $(dir $(lastword $(MAKEFILE_LIST)))
-# ここに追加したいファイルを書く
+
 APPL_CXXOBJS += \
 	Tracer.o \
+	ArmManager.o \
+	ColorSensorManager.o \
+	DualMotorController.o \
+	HeadingSensorManager.o \
+	TimerManager.o \
+	UltrasonicDistanceSensorManager.o
 
 SRCLANG := c++
 
@@ -12,10 +18,15 @@ include $(EV3RT_SDK_LIB_DIR)/libcpp-spike/Makefile
 
 endif
 
-APPL_DIRS += $(mkfile_path)app $(mkfile_path)unit
+# ディレクトリの指定
+APPL_DIRS += \
+	$(mkfile_path)app \
+	$(mkfile_path)device \
 
+# インクルードパスの指定
 INCLUDES += \
 	-I$(mkfile_path)../../../drivers/include \
 	-I$(mkfile_path)../../../drivers/include/spike \
 	-I$(mkfile_path)../../../drivers/include/libcpp/spike \
 	-I$(mkfile_path)app \
+	-I$(mkfile_path)device \
