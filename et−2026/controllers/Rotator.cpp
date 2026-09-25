@@ -1,5 +1,4 @@
 #include "Rotator.h"
-#include "Clock.h" // 待機処理用
 #include <cmath>   // std::abs用
 
 Rotator::Rotator(HeadingSensorManager& sensor, DualMotorController& motors_ref)
@@ -7,7 +6,6 @@ Rotator::Rotator(HeadingSensorManager& sensor, DualMotorController& motors_ref)
 }
 
 void Rotator::rotate(float angle, int speed) {
-    spikeapi::Clock clock;
 
     // 1. 旋回開始前に現在の角度をリセット
     headingSensor.resetHeading();
@@ -16,7 +14,7 @@ void Rotator::rotate(float angle, int speed) {
     int leftPower = (angle > 0) ? speed : -speed;
     int rightPower = (angle > 0) ? -speed : speed;
 
-    motors.setPower(leftPower, rightPower);
+    motors.setSpeed(leftPower, rightPower);
 
     // 3. 目的の角度に到達するまでループ
     while (true) {
@@ -26,11 +24,5 @@ void Rotator::rotate(float angle, int speed) {
         if (std::abs(currentAngle) >= std::abs(angle)) {
             break;
         }
-
-        // CPU負荷を下げるための微小な待機（10ミリ秒）
-        clock.sleep(10 * 1000); 
     }
-
-    // 4. 旋回終了時にモーターを停止
-    motors.stop();
 }

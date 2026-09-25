@@ -5,10 +5,11 @@
 
 using namespace spikeapi;
 
-class LeftRightMotor {
+class DualMotorController {
 public:
-  LeftRightMotor();
+  DualMotorController();
   void setSpeed(int leftSpeed, int rightSpeed);
+  void setPwm(int leftPwm, int rightPwm); // 追加: PWM（パワー）で指定するメソッド
   void stop();
   int32_t getCountLeft();
   int32_t getCountRight();

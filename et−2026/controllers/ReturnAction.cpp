@@ -1,65 +1,47 @@
 #include "ReturnAction.h"
-#include <cmath>
 #include <stdio.h>
 
-ReturnAction::ReturnAction(LeftRightMotor& motors, Odometry& odometry)
-    : mMotors(motors), mOdometry(odometry), returnState(0) {}
-
-void ReturnAction::init() {
-    returnState = 0; //
-    printf("ReturnAction Initialized.\n");
-}
+ReturnAction::ReturnAction(Odometry& odome,
+                           StraightRunner& runner,
+                           ColorSensorManager& colorMgr,
+                           TimerManager& timerMgr)
+    : odometry(odome),
+      straightRunner(runner),
+      colorSensorManager(colorMgr),
+      timerManager(timerMgr) {}
 
 bool ReturnAction::run() {
-    // 目的地（原点 X:0, Y:0）
-    const float targetX = 0.0f;
-    const float targetY = 0.0f;
+    printf("[ReturnAction] Starting return action sequence...\n");
 
-    // 現在の座標
-    float currentX = mOdometry.getX();
-    float currentY = mOdometry.getY();
-    float currentTheta = mOdometry.getTheta();
+    // 1. オドメトリを使って現在の位置・角度を計算・確定する
+    odometry.calculatePosition(); //[cite: 12]
+    float angleFromOrigin = odometry.getAngleFromOrigin(); //[cite: 12]
+    float currentHeading = odometry.getRobotHeading(); //[cite: 12]
 
-    switch (returnState) { //[cite: 38]
-        case 0: {
-            // 1. 原点への目標角度を計算する
-            float diffX = targetX - currentX;
-            float diffY = targetY - currentY;
-            float targetAngle = std::atan2(diffY, diffX);
+    printf("[ReturnAction] Current Odometry - Angle from origin: %.2f deg, Robot Heading: %.2f deg\n", 
+           angleFromOrigin, currentHeading);
 
-            // 旋回速度を設定して状態移行
-            mMotors.setSpeed(30, -30);
-            returnState = 1; //[cite: 38]
+    // 2. StraightRunner を使って指定方向へ移動しながら黒線を探す
+    printf("[ReturnAction] Moving forward using StraightRunner and searching for black line...\n");
+    straightRunner.run(SPEED_MOVE); //
+
+    while (true) {
+        // オドメトリの移動ステップを記録
+        odometry.recordStep(); //
+
+        // カラーセンサーの反射率を取得して黒線判定
+        int32_t reflection = colorSensorManager.getReflection(); //[cite: 3, 7]
+
+        // 黒線検知のしきい値（環境に合わせて調整）
+        if (reflection <= 10 && reflection >= 0) {
+            printf("[ReturnAction] Black line detected! Reflection: %ld\n", reflection);
             break;
         }
-        case 1: {
-            // 2. 目標角度を向くまで旋回を続ける（非ブロッキング）
-            float diffX = targetX - currentX;
-            float diffY = targetY - currentY;
-            float targetAngle = std::atan2(diffY, diffX);
-            
-            // 角度の誤差が小さくなったら前進へ移行
-            if (std::abs(targetAngle - currentTheta) < 0.1f) {
-                mMotors.setSpeed(50, 50); // 前進
-                returnState = 2; //[cite: 38]
-            }
-            break;
-        }
-        case 2: {
-            // 3. 原点に到着するまで前進する
-            float distanceToTarget = std::sqrt(std::pow(targetX - currentX, 2) + std::pow(targetY - currentY, 2));
-            
-            // 距離が十分近くなったら完了
-            if (distanceToTarget < 50.0f) { // 50mm以内なら到着とする
-                mMotors.stop();
-                returnState = 3; //[cite: 38]
-            }
-            break;
-        }
-        case 3:
-            // 4. 完了状態
-            return true; //[cite: 38]
+
+        timerManager.sleep(10 * 1000); // 10ms待機[cite: 6]
     }
-    
-    return false; //[cite: 38]
+
+    printf("[ReturnAction] Return action completed. Black line found.\n");
+
+    return true;
 }

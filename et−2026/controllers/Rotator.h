@@ -1,8 +1,8 @@
 #ifndef ROTATOR_H
 #define ROTATOR_H
 
-#include "HeadingSensorManager.h"
-#include "DualMotorController.h" // 左右のモーター制御用（前回までのコードの構成を想定）
+#include "../device/HeadingSensorManager.h"
+#include "../device/DualMotorController.h" // 左右のモーター制御用（前回までのコードの構成を想定）
 
 class Rotator {
 private:

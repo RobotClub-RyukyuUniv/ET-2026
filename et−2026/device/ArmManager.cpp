@@ -1,21 +1,59 @@
 #include "ArmManager.h"
+#include "Clock.h" // タイムアウト計測用
 
 using namespace spikeapi;
 
 // コンストラクタの定義
-ArmManager::ArmManager(Motor& motor)
-    : armMotor(motor) {
+ArmManager::ArmManager()
+    : armMotor(EPort::PORT_C, Motor::EDirection::COUNTERCLOCKWISE, true) {
 }
 
-// アームを上げる動作
+// アームを上げる動作（上限でストールするか、1秒でタイムアウト）
 void ArmManager::up() {
-    // 例: PWMパワー30で指定角度まで回す、または一定時間動かす処理
-    // （※値や制御方式は機体に合わせて調整してください）
-    armMotor.setPower(30); 
+    const int8_t arm_pwm = 15; // 上げるときのパワー
+    
+    // アームを上方向に動かす
+    armMotor.setPower(arm_pwm);
+
+    Clock stall_timer;
+    stall_timer.reset();
+
+    // 上限に到達してストールするまで監視
+    while (true) {
+        if (armMotor.isStalled()) {
+            break;
+        }
+        // 万が一のための安全装置（2.0秒経過したら強制抜け）[cite: 23]
+        if (stall_timer.now() >= 2000000ULL) {
+            break;
+        }
+    }
+
+    // 上限に達したので位置を維持して固定
+    armMotor.hold();
 }
 
-// アームを下げる動作
+// アームを下げる動作（下限でストールするか、5秒でタイムアウト）
 void ArmManager::down() {
-    // 例: 逆方向にPWMパワー-30で動かす処理
-    armMotor.setPower(-30);
+    const int8_t arm_pwm = -15; // 下げるときのパワー
+    
+    // アームを下方向に動かす
+    armMotor.setPower(arm_pwm);
+
+    Clock stall_timer;
+    stall_timer.reset();
+
+    // 下限に到達してストールするまで監視
+    while (true) {
+        if (armMotor.isStalled()) {
+            break;
+        }
+        // 万が一のための安全装置（5秒経過したら強制抜け）[cite: 23]
+        if (stall_timer.now() >= 3000000ULL) {
+            break;
+        }
+    }
+
+    // 下限に達したので位置を維持して固定
+    armMotor.hold();
 }

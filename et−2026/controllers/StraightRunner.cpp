@@ -1,6 +1,6 @@
 #include "StraightRunner.h"
 
-StraightRunner::StraightRunner(LeftRightMotor& motors) 
+StraightRunner::StraightRunner(DualMotorController &motors)
     : mMotors(motors) {}
 
 void StraightRunner::run(int speed) {

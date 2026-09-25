@@ -1,27 +1,28 @@
 #ifndef BOTTLE_PUSHER_H_
 #define BOTTLE_PUSHER_H_
 
-#include "DualMotorController.h"
-#include "ArmManager.h"
-#include "Odometry.h" // 移動距離の判定用
+#include "../device/DualMotorController.h"
+#include "../device/ArmManager.h"
+#include "../device/ColorSensorManager.h"
+#include "../device/TimerManager.h"
 
 class BottlePusher {
 public:
-    BottlePusher(LeftRightMotor& motors, ArmManager& arm, Odometry& odometry);
+    BottlePusher(DualMotorController& motors, ArmManager& arm, ColorSensorManager& colorSensor, TimerManager& timer);
 
     void init();
 
-    // UML定義メソッド[cite: 38]
     // 押し出しが完了したら true を返す
     bool run();
 
 private:
-    // UML定義属性[cite: 38]
-    int pushState; 
-    
-    LeftRightMotor& mMotors;
+    DualMotorController& mMotors;
     ArmManager& mArm;
-    Odometry& mOdometry;
+    ColorSensorManager& mColorSensor;
+    TimerManager& mTimer;
+
+    int pushState;
+    uint64_t stateTimer; // 時間計測・タイムアウト用
 };
 
 #endif // BOTTLE_PUSHER_H_

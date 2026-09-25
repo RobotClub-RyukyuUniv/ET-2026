@@ -1,25 +1,29 @@
-#ifndef RETURN_ACTION_H_
-#define RETURN_ACTION_H_
+#ifndef RETURN_ACTION_H
+#define RETURN_ACTION_H
 
-#include "DualMotorController.h"
 #include "Odometry.h"
+#include "StraightRunner.h"
+#include "../device/ColorSensorManager.h"
+#include "../device/TimerManager.h"
 
 class ReturnAction {
-public:
-    ReturnAction(LeftRightMotor& motors, Odometry& odometry);
-
-    void init();
-
-    // UML定義メソッド[cite: 38]
-    // 復帰が完了したら true を返す
-    bool run();
-
 private:
-    // UML定義属性[cite: 38]
-    int returnState; 
+    Odometry& odometry;
+    StraightRunner& straightRunner;
+    ColorSensorManager& colorSensorManager;
+    TimerManager& timerManager;
 
-    LeftRightMotor& mMotors;
-    Odometry& mOdometry;
+    // 動作パラメータ
+    static constexpr int SPEED_MOVE = 50;
+
+public:
+    ReturnAction(Odometry& odome,
+                 StraightRunner& runner,
+                 ColorSensorManager& colorMgr,
+                 TimerManager& timerMgr);
+
+    // 復帰動作を実行し、黒線に到達したら true を返す
+    bool run();
 };
 
-#endif // RETURN_ACTION_H_
+#endif // RETURN_ACTION_H

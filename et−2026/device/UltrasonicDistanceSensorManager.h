@@ -1,17 +1,18 @@
 #ifndef ULTRASONIC_DISTANCE_SENSOR_MANAGER_H
 #define ULTRASONIC_DISTANCE_SENSOR_MANAGER_H
 
-#include <libcpp/spike/UltrasonicSensor.h>
+#include "UltrasonicSensor.h"
 
 using namespace spikeapi;
 
 class UltrasonicDistanceSensorManager {
 public:
-  explicit UltrasonicDistanceSensorManager(EPort port);
+  UltrasonicDistanceSensorManager();
   int32_t getDistance() const;
+  bool isPresence() const;
 
 private:
-  UltrasonicSensor ultrasonicSensor;
+  spikeapi::UltrasonicSensor ultrasonicSensor;
 };
 
 #endif // ULTRASONIC_DISTANCE_SENSOR_MANAGER_H

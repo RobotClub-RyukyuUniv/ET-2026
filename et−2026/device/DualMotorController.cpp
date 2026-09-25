@@ -1,29 +1,34 @@
 #include "DualMotorController.h"
 
-LeftRightMotor::LeftRightMotor():
-  leftWheel(EPort::PORT_B,Motor::EDirection::COUNTERCLOCKWISE,true),
-  rightWheel(EPort::PORT_A,Motor::EDirection::CLOCKWISE,true) {
+DualMotorController::DualMotorController():
+  leftWheel(EPort::PORT_B, Motor::EDirection::COUNTERCLOCKWISE, true),
+  rightWheel(EPort::PORT_A, Motor::EDirection::CLOCKWISE, true) {
 }
 
-void LeftRightMotor::setSpeed(int leftSpeed, int rightSpeed) {
-  leftWheel.setPower(leftSpeed);
-  rightWheel.setPower(rightSpeed);
+void DualMotorController::setSpeed(int leftSpeed, int rightSpeed) {
+  leftWheel.setSpeed(leftSpeed);
+  rightWheel.setSpeed(rightSpeed);
 }
 
-void LeftRightMotor::stop() {
+void DualMotorController::setPwm(int leftPwm, int rightPwm) {
+  leftWheel.setPower(leftPwm);
+  rightWheel.setPower(rightPwm);
+}
+
+void DualMotorController::stop() {
   leftWheel.stop();
   rightWheel.stop();
 }
 
-int32_t LeftRightMotor::getCountLeft() {
+int32_t DualMotorController::getCountLeft() {
   return leftWheel.getCount();
 }
 
-int32_t LeftRightMotor::getCountRight() {
+int32_t DualMotorController::getCountRight() {
   return rightWheel.getCount();
 }
 
-void LeftRightMotor::resetCount() {
+void DualMotorController::resetCount() {
   leftWheel.resetCount();
   rightWheel.resetCount();
 }

@@ -7,12 +7,12 @@ using namespace spikeapi;
 
 class ArmManager {
 private:
-    // モーターインスタンスへの参照
-    Motor& armMotor;
+    // モーターのインスタンスを内部で保持
+    Motor armMotor;
 
 public:
-    // コンストラクタ（使用するモーターのインスタンスを受け取る）
-    explicit ArmManager(Motor& motor);
+    // コンストラクタ（ポートCの設定をここで行う）
+    ArmManager();
 
     // アームを上げる
     void up();
